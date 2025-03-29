@@ -1,0 +1,2035 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Братва Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            transition: background 0.5s;
+            height: 100vh;
+            touch-action: manipulation;
+        }
+
+        /* Логотип и подпись */
+        .logo-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-image: url('https://i1.sndcdn.com/artworks-000263976617-fv3mxo-t500x500.jpg');
+            background-size: cover;
+            border: 2px solid white;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+        }
+
+        .by-alienprog {
+            color: white;
+            font-size: 18px;
+            margin-left: 10px;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.7);
+        }
+
+        /* Главное меню */
+        .main-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            background-image: url('https://i.pinimg.com/originals/c8/53/73/c85373669377f09b4444e4bd5663b363.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .menu-title {
+            color: rgb(255, 255, 255);
+            font-size: 48px;
+            margin-bottom: 40px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .menu-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .menu-button:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* Поле ввода имени */
+        .name-input {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 15px;
+            margin: 10px;
+            font-size: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .name-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Меню званий */
+        .ranks-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .ranks-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+
+        .rank-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 15px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            width: 200px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .rank-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border: 2px solid gold;
+        }
+
+        .rank-icon {
+            width: 120px;
+            height: 120px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+        }
+
+        .rank-item:hover .rank-icon {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8));
+        }
+
+        .rank-title {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .rank-points {
+            color: gold;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .rank-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            text-align: center;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .rank-item.active .rank-description {
+            max-height: 200px;
+            margin-top: 10px;
+        }
+
+        .rank-info {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid gold;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            z-index: 1002;
+            display: none;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5));
+        }
+
+        .rank-info-icon {
+            width: 150px;
+            height: 150px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0 auto 20px;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8));
+        }
+
+        .rank-info-title {
+            color: gold;
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .rank-info-points {
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .rank-info-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .close-rank-info {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-rank-info:hover {
+            color: gold;
+            transform: rotate(90deg);
+        }
+
+        /* Настройки */
+        .settings-menu, .background-menu, .mobile-controls-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .settings-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+            border: 2px solid rgba(0, 255, 255, 0.5);
+        }
+
+        .settings-title {
+            color: white;
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7));
+        }
+
+        .settings-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 25px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .settings-option:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: translateX(10px);
+        }
+
+        .settings-label {
+            color: white;
+            font-size: 22px;
+            margin-right: 20px;
+        }
+
+        .settings-input {
+            display: flex;
+            align-items: center;
+        }
+
+        .settings-input input {
+            width: 80px;
+            padding: 10px;
+            font-size: 18px;
+            text-align: center;
+            border-radius: 5px;
+            border: 2px solid rgba(0, 255, 255, 0.5);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .settings-input input:focus {
+            border-color: gold;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5));
+            outline: none;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            border: 2px solid white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Выбор фона */
+        .background-options-container {
+            width: 100%;
+            max-width: 1200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .background-options {
+            display: flex;
+            flex-wrap: nowrap;
+            transition: transform 0.5s ease;
+            padding: 20px 0;
+        }
+
+        .background-option {
+            width: 300px;
+            height: 180px;
+            margin: 15px;
+            background-size: cover;
+            background-position: center;
+            border: 3px solid white;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .background-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        .background-option:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5));
+            border-color: gold;
+        }
+
+        .background-option:hover::before {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .background-option.active {
+            border-color: gold;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8));
+        }
+
+        .background-option.active::after {
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: gold;
+            font-size: 30px;
+            text-shadow: 0 0 5px black;
+        }
+
+        .background-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .background-nav:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .background-prev {
+            left: 10px;
+        }
+
+        .background-next {
+            right: 10px;
+        }
+
+        /* Игровые элементы */
+        .scene {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: none;
+            perspective: 1000px;
+        }
+
+        .cube {
+            width: 150px;
+            height: 150px;
+            position: absolute;
+            transform-style: preserve-3d;
+            transform: rotateX(15deg) rotateY(-15deg);
+            transition: transform 0.1s;
+            left: 50%;
+            top: 50%;
+        }
+
+        .face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6),
+                        0 0 10px rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: white;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.95;
+            backface-visibility: visible;
+            background-image: url('images/yura.jpg');
+        }
+
+        .front { transform: translateZ(75px); filter: brightness(1.1); }
+        .back { transform: rotateY(180deg) translateZ(75px); filter: contrast(1.2); }
+        .right { transform: rotateY(90deg) translateZ(75px); filter: saturate(1.3); }
+        .left { transform: rotateY(-90deg) translateZ(75px); filter: hue-rotate(20deg); }
+        .top { transform: rotateX(90deg) translateZ(75px); filter: brightness(1.2); }
+        .bottom { transform: rotateX(-90deg) translateZ(75px); filter: contrast(1.1); }
+
+        .bullet {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 50;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 0, 0.7));
+        }
+
+        .message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 0, 0, 0.8);
+            color: white;
+            padding: 20px 40px;
+            font-size: 32px;
+            border-radius: 10px;
+            z-index: 200;
+            display: none;
+            text-align: center;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            20%, 60% { transform: translate(-50%, -50%) rotate(5deg); }
+            40%, 80% { transform: translate(-50%, -50%) rotate(-5deg); }
+        }
+
+        .game-over {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+        }
+
+        .game-over-content {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid gold;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5));
+        }
+
+        .game-over-title {
+            color: white;
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px red;
+        }
+
+        .game-over-score {
+            color: gold;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .game-over-rank-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .game-over-rank {
+            color: white;
+            font-size: 32px;
+            margin-right: 15px;
+        }
+
+        .game-over-rank-icon {
+            width: 60px;
+            height: 60px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .game-over-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .game-over-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s;
+            min-width: 180px;
+        }
+
+        .game-over-button:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        .game-over-button.settings {
+            border-color: cyan;
+            color: cyan;
+        }
+
+        .game-over-button.exit {
+            border-color: red;
+            color: red;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 100;
+        }
+
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 20px;
+            background: #4CAF50;
+            z-index: 10;
+        }
+
+        .pause-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+
+        .pause-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .score-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 24px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 15px;
+            border-radius: 5px;
+        }
+
+        .current-rank {
+            width: 40px;
+            height: 40px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-left: 10px;
+            display: none;
+            transition: all 0.3s;
+        }
+
+        .current-rank:hover {
+            transform: scale(1.2) rotate(10deg);
+            filter: drop-shadow(0 0 5px gold);
+        }
+
+        .last-result {
+            position: fixed;
+            top: 20px;
+            right: 250px;
+            color: white;
+            font-size: 18px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .last-result-icon {
+            width: 30px;
+            height: 30px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin-left: 10px;
+        }
+
+        .rank-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 300;
+            display: none;
+            animation: fadeInOut 3s ease-in-out;
+            border: 2px solid gold;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5));
+        }
+
+        .rank-notification-icon {
+            width: 100px;
+            height: 100px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0 auto 15px;
+            filter: drop-shadow(0 0 10px gold);
+        }
+
+        .rank-notification-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: gold;
+            text-shadow: 0 0 5px black;
+        }
+
+        .player-name {
+            position: absolute;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            width: 200px;
+            left: -25px;
+            top: -30px;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+            z-index: 60;
+        }
+
+        /* Новые стили для жизней */
+        .hit-counter {
+            position: fixed;
+            top: 20px;
+            right: 120px;
+            color: white;
+            font-size: 24px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 15px;
+            border-radius: 5px;
+        }
+
+        .hit-hearts {
+            display: flex;
+            margin-left: 10px;
+        }
+
+        .heart {
+            width: 24px;
+            height: 24px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>');
+            background-repeat: no-repeat;
+            margin: 0 3px;
+            transition: all 0.3s;
+        }
+
+        .heart.lost {
+            opacity: 0.3;
+            transform: scale(0.8);
+        }
+
+        /* Стили для комбо-системы */
+        .combo-counter {
+            position: fixed;
+            top: 70px;
+            left: 20px;
+            color: gold;
+            font-size: 24px;
+            z-index: 100;
+            display: none;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 15px;
+            border-radius: 5px;
+            animation: comboPulse 0.5s infinite;
+        }
+
+        /* Мобильное управление */
+        .mobile-controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            display: none;
+            z-index: 90;
+        }
+
+        .mobile-left, .mobile-right {
+            position: absolute;
+            bottom: 0;
+            width: 50%;
+            height: 100px;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        }
+
+        .mobile-left {
+            left: 0;
+            background-color: rgba(0, 0, 255, 0.3);
+        }
+
+        .mobile-right {
+            right: 0;
+            background-color: rgba(255, 0, 0, 0.3);
+        }
+
+        .mobile-left.active, .mobile-right.active {
+            opacity: 0.7;
+        }
+
+        .mobile-jump {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 100px);
+            display: none;
+            z-index: 80;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        }
+
+        @keyframes comboPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes rankIconPulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 5px gold); }
+            50% { transform: scale(1.2); filter: drop-shadow(0 0 15px gold); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 5px gold); }
+        }
+
+        /* MOBILE UPR */
+        .mobile-controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            display: none;
+            z-index: 90;
+            touch-action: manipulation;
+        }
+
+        .mobile-left, .mobile-right {
+            position: absolute;
+            bottom: 0;
+            width: 50%;
+            height: 100%;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 5px black;
+        }
+
+        .mobile-left {
+            left: 0;
+            background-color: rgba(0, 0, 255, 0.3);
+        }
+
+        .mobile-right {
+            right: 0;
+            background-color: rgba(255, 0, 0, 0.3);
+        }
+
+        .mobile-left.active, .mobile-right.active {
+            opacity: 0.7;
+        }
+
+        .mobile-jump {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 150px);
+            display: none;
+            z-index: 80;
+        }
+
+        /* Стили для инструкций мобильного управления */
+        .mobile-instruction {
+            position: fixed;
+            bottom: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+            z-index: 100;
+            display: none;
+        }
+        /* MOBILE UPR */
+
+    </style>
+</head>
+<body>
+    <!-- Логотип и подпись -->
+    <div class="logo-container">
+        <div class="logo"></div>
+        <div class="by-alienprog">by alienprog</div>
+    </div>
+
+    <!-- Главное меню -->
+    <div class="main-menu">
+        <div class="menu-title">Братва Game</div>
+        <input type="text" class="name-input" id="player-name" placeholder="Введите ваше имя" maxlength="15">
+        <div class="menu-button" id="play-button">Играть</div>
+        <div class="menu-button" id="mobile-play-button">Играть с телефона</div>
+        <div class="menu-button" id="ranks-button">Звания</div>
+        <div class="menu-button" id="settings-button">Настройки</div>
+        <div class="menu-button" id="background-button">Поменять фон</div>
+    </div>
+
+    <!-- Меню званий -->
+    <div class="ranks-menu">
+        <div class="back-button">← Назад</div>
+        <h2 style="color: white; font-size: 36px; text-shadow: 0 0 10px gold;">Система званий</h2>
+        
+        <div class="ranks-container">
+            <div class="rank-item" data-rank="Silver I">
+                <div class="rank-icon" style="background-image: url('rangs/s1.jpg')"></div>
+                <div class="rank-title">Silver I</div>
+                <div class="rank-points">1,000 очков</div>
+                <div class="rank-description">
+                    Вы только начинаете свой путь.
+                </div>
+            </div>
+            
+            <div class="rank-item" data-rank="Silver Master">
+                <div class="rank-icon" style="background-image: url('rangs/s2.jpg')"></div>
+                <div class="rank-title">Silver Master</div>
+                <div class="rank-points">10,000 очков</div>
+                <div class="rank-description">
+                    Вы освоили основы игры.
+                </div>
+            </div>
+            
+            <div class="rank-item" data-rank="Gold Star">
+                <div class="rank-icon" style="background-image: url('rangs/g1.jpg')"></div>
+                <div class="rank-title">Gold Star</div>
+                <div class="rank-points">20,000 очков</div>
+                <div class="rank-description">
+                    Золотая звезда. Вы стабильно показываете хорошие результаты.
+                </div>
+            </div>
+            
+            <div class="rank-item" data-rank="Gold Pro">
+                <div class="rank-icon" style="background-image: url('rangs/g2.jpg')"></div>
+                <div class="rank-title">Gold Pro</div>
+                <div class="rank-points">25,000 очков</div>
+                <div class="rank-description">
+                    Профессионал золотого уровня. Ваши навыки впечатляют.
+                </div>
+            </div>
+            
+            <div class="rank-item" data-rank="Master I">
+                <div class="rank-icon" style="background-image: url('rangs/k1.jpg')"></div>
+                <div class="rank-title">Master I</div>
+                <div class="rank-points">30,000 очков</div>
+                <div class="rank-description">
+                    Первый уровень мастерства. Вы выделяетесь среди игроков.
+                </div>
+            </div>
+            
+            <div class="rank-item" data-rank="Master II">
+                <div class="rank-icon" style="background-image: url('rangs/k2.jpg')"></div>
+                <div class="rank-title">Master II</div>
+                <div class="rank-points">35,000 очков</div>
+                <div class="rank-description">
+                    Второй уровень мастерства. Вы приближаетесь к элите.
+                </div>
+            </div>
+            
+            <div class="rank-item" data-rank="BIG STAR">
+                <div class="rank-icon" style="background-image: url('rangs/b1.jpg')"></div>
+                <div class="rank-title">BIG STAR</div>
+                <div class="rank-points">45,000 очков</div>
+                <div class="rank-description">
+                    Большая звезда. Вы в топе игроков.
+                </div>
+            </div>
+            
+            <div class="rank-item" data-rank="LEGEND">
+                <div class="rank-icon" style="background-image: url('rangs/ber1.jpg')"></div>
+                <div class="rank-title">LEGEND</div>
+                <div class="rank-points">55,000 очков</div>
+                <div class="rank-description">
+                    Легенда игры. Ваше имя знают все.
+                </div>
+            </div>
+            
+            <div class="rank-item" data-rank="SUPREME">
+                <div class="rank-icon" style="background-image: url('rangs/sup1.jpg')"></div>
+                <div class="rank-title">SUPREME</div>
+                <div class="rank-points">65,000 очков</div>
+                <div class="rank-description">
+                    Высший уровень. Вы правите этим миром.
+                </div>
+            </div>
+            
+            <div class="rank-item" data-rank="GLOBAL ELITE">
+                <div class="rank-icon" style="background-image: url('rangs/global.jpg')"></div>
+                <div class="rank-title">GLOBAL ELITE</div>
+                <div class="rank-points">80,000 очков</div>
+                <div class="rank-description">
+                    Глобальная элита. Вы входите в 0.1% лучших игроков.
+                </div>
+            </div>
+            
+            <div class="rank-item" data-rank="PRIKOLIST">
+                <div class="rank-icon" style="background-image: url('rangs/prikolist.jpg')"></div>
+                <div class="rank-title">PRIKOLIST </div>
+                <div class="rank-points">100,000 очков</div>
+                <div class="rank-description">
+                    Абсолютный чемпион. Вы достигли уровня Юли Ким
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подробная информация о звании -->
+    <div class="rank-info" id="rank-info">
+        <div class="close-rank-info">×</div>
+        <div class="rank-info-icon" id="rank-info-icon"></div>
+        <div class="rank-info-title" id="rank-info-title"></div>
+        <div class="rank-info-points" id="rank-info-points"></div>
+        <div class="rank-info-description" id="rank-info-description"></div>
+    </div>
+
+    <!-- Меню настроек -->
+    <div class="settings-menu">
+        <div class="back-button">← Назад</div>
+        <div class="settings-container">
+            <div class="settings-title">Настройки игры</div>
+            
+            <div class="settings-option">
+                <div class="settings-label">Скорость куба:</div>
+                <div class="settings-input">
+                    <input type="number" id="cube-speed" value="5" min="1" max="10">
+                </div>
+            </div>
+            
+            <div class="settings-option">
+                <div class="settings-label">Скорость пуль:</div>
+                <div class="settings-input">
+                    <input type="number" id="bullet-speed" value="3" min="1" max="10">
+                </div>
+            </div>
+            
+            <div class="settings-option">
+                <div class="settings-label">Сила прыжка:</div>
+                <div class="settings-input">
+                    <input type="number" id="jump-force" value="12" min="5" max="20">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Меню выбора фона -->
+    <div class="background-menu">
+        <div class="back-button">← Назад</div>
+        <h2 style="color: white; font-size: 36px; text-shadow: 0 0 10px cyan;">Выберите фон</h2>
+        
+        <div class="background-options-container">
+            <button class="background-nav background-prev">❮</button>
+            <div class="background-options" id="background-options">
+                <div class="background-option" style="background-image: url('https://riac34.ru/upload/iblock/c64/image_7_Nikolaevsk.jpg')" data-bg="https://riac34.ru/upload/iblock/c64/image_7_Nikolaevsk.jpg"></div>
+                <div class="background-option" style="background-image: url('https://cdn.culture.ru/images/cb6f0433-abb7-531e-bdf1-29e66b42122d')" data-bg="https://cdn.culture.ru/images/cb6f0433-abb7-531e-bdf1-29e66b42122d"></div>
+                <div class="background-option" style="background-image: url('https://avatars.mds.yandex.net/get-altay/1974402/2a0000017999def1d2bd52969d8db76d88d0/XXXL')" data-bg="https://avatars.mds.yandex.net/get-altay/1974402/2a0000017999def1d2bd52969d8db76d88d0/XXXL"></div>
+                <div class="background-option" style="background-image: url('https://gbz1.ru/upload/iblock/2ac/2acd4f0a694ba3cd94f9d931084e06f3.png')" data-bg="https://gbz1.ru/upload/iblock/2ac/2acd4f0a694ba3cd94f9d931084e06f3.png"></div>
+                <div class="background-option" style="background-image: url('https://static.mk.ru/upload/entities/2022/03/23/19/articles/facebookPicture/d4/49/0a/7f/5c8d532f1afac8540ba7352ff5b8100c.jpg')" data-bg="https://static.mk.ru/upload/entities/2022/03/23/19/articles/facebookPicture/d4/49/0a/7f/5c8d532f1afac8540ba7352ff5b8100c.jpg"></div>
+                <div class="background-option" style="background-image: url('https://ooo-sanatoriy.ru/upload/icms/images/sanatories/gallerys/images/image_31565.jpg')" data-bg="https://ooo-sanatoriy.ru/upload/icms/images/sanatories/gallerys/images/image_31565.jpg"></div>
+                <div class="background-option" style="background-image: url('https://rs-cam.ru/upload/iblock/9fa/0asrt7dnw2jiygu01qzmx6b0upirjwt7.jpg')" data-bg="https://rs-cam.ru/upload/iblock/9fa/0asrt7dnw2jiygu01qzmx6b0upirjwt7.jpg"></div>
+                <div class="background-option" style="background-image: url('https://s3.objstor.cloud4u.com/unti-prod-people/file/presentation/project/mdj0gdt8bg.jpg')" data-bg="https://s3.objstor.cloud4u.com/unti-prod-people/file/presentation/project/mdj0gdt8bg.jpg"></div>
+            </div>
+            <button class="background-nav background-next">❯</button>
+        </div>
+    </div>
+
+    <!-- Меню мобильного управления -->
+    <div class="mobile-controls-menu">
+        <div class="back-button">← Назад</div>
+        <div class="settings-container">
+            <div class="settings-title">Мобильное управление</div>
+            
+            <div class="settings-option">
+                <div class="settings-label">Как играть:</div>
+                <div class="settings-input" style="flex-direction: column; align-items: flex-start;">
+                    <p style="color: white; margin: 5px 0;">- Нажимайте левую часть экрана для движения влево</p>
+                    <p style="color: white; margin: 5px 0;">- Нажимайте правую часть экрана для движения вправо</p>
+                    <p style="color: white; margin: 5px 0;">- Нажимайте в любое место экрана для прыжка</p>
+                </div>
+            </div>
+            
+            <div class="menu-button" id="start-mobile-game">Начать игру</div>
+        </div>
+    </div>
+
+    <!-- Игровая сцена -->
+    <div class="scene">
+        <div class="score-container">
+            Очки: <span id="score">0</span>
+            <div class="current-rank" id="current-rank"></div>
+        </div>
+        <div class="last-result" id="last-result">
+            Последний: <span id="last-score">0</span>
+            <div class="last-result-icon" id="last-rank-icon"></div>
+        </div>
+        <div class="hit-counter">
+            Жизни:
+            <div class="hit-hearts" id="hit-hearts"></div>
+        </div>
+        <div class="combo-counter" id="combo-counter">
+            Комбо: <span id="combo-value">0</span>x
+        </div>
+        <div class="cube">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face right"></div>
+            <div class="face left"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+            <div class="player-name" id="player-name-display"></div>
+        </div>
+        <div class="ground"></div>
+        <div class="pause-button">Пауза</div>
+    </div>
+    
+    <!-- Мобильное управление -->
+    <div class="mobile-controls">
+        <div class="mobile-left" id="mobile-left"></div>
+        <div class="mobile-right" id="mobile-right"></div>
+    </div>
+    <div class="mobile-jump" id="mobile-jump"></div>
+    
+    <div class="message">Вас подстрелили!</div>
+    <div class="controls">Управление: ← → двигаться, Пробел - прыжок</div>
+
+    <!-- Меню Game Over -->
+    <div class="game-over" id="game-over">
+        <div class="game-over-content">
+            <div class="game-over-title">Игра окончена!</div>
+            <div class="game-over-score" id="final-score">Очки: 0</div>
+            <div class="game-over-rank-container">
+                <div class="game-over-rank" id="final-rank">Звание: Новичок</div>
+                <div class="game-over-rank-icon" id="final-rank-icon"></div>
+            </div>
+            <div class="game-over-buttons">
+                <div class="game-over-button" id="restart-button">Играть снова</div>
+                <div class="game-over-button settings" id="settings-button-gameover">Настройки</div>
+                <div class="game-over-button exit" id="exit-button">Главное меню</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомление о новом звании -->
+    <div class="rank-notification" id="rank-notification">
+        <div class="rank-notification-icon" id="rank-notification-icon"></div>
+        <div class="rank-notification-text" id="rank-notification-text"></div>
+    </div>
+
+    /* Мобильное управление */
+    <div class="mobile-controls">
+        <div class="mobile-left" id="mobile-left">← ЛЕВО</div>
+        <div class="mobile-right" id="mobile-right">ПРАВО →</div>
+    </div>
+    <div class="mobile-jump" id="mobile-jump"></div>
+    <div class="mobile-instruction" id="mobile-instruction">Двойное нажатие для прыжка</div>
+    /* Мобильное управление */
+
+
+    <script>
+        // Глобальные переменные игры
+        let gameSettings = {
+            moveSpeed: 5,
+            bulletSpeed: 3,
+            jumpForce: 12,
+            background: 'https://riac34.ru/upload/iblock/c64/image_7_Nikolaevsk.jpg',
+            playerName: 'Игрок',
+            isMobile: false,
+            lastScore: 0,
+            lastRank: null
+        };
+
+        let gameState = {
+            cubeX: 0,
+            cubeY: 0,
+            velocityX: 0,
+            velocityY: 0,
+            isJumping: false,
+            isPaused: false,
+            bullets: [],
+            score: 0,
+            currentRank: null,
+            bulletsDodged: 0,
+            hitsTaken: 0,
+            maxHits: 5,
+            combo: 0,
+            lastDodgeTime: 0,
+            comboTimeout: null,
+            ranksAchieved: {
+                'Silver I': false,
+                'Silver Master': false,
+                'Gold Star': false,
+                'Gold Pro': false,
+                'Master I': false,
+                'Master II': false,
+                'BIG STAR': false,
+                'LEGEND': false,
+                'SUPREME': false,
+                'GLOBAL ELITE': false,
+                'PRIKOLIST :)': false
+            },
+            mobileLeftPressed: false,
+            mobileRightPressed: false
+        };
+
+        // Иконки званий
+        const rankImages = {
+            'Silver I': 'rangs/s1.jpg',
+            'Silver Master': 'rangs/s2.jpg',
+            'Gold Star': 'rangs/g1.jpg',
+            'Gold Pro': 'rangs/g2.jpg',
+            'Master I': 'rangs/k1.jpg',
+            'Master II': 'rangs/k2.jpg',
+            'BIG STAR': 'rangs/b1.jpg',
+            'LEGEND': 'rangs/ber1.jpg',
+            'SUPREME': 'rangs/sup1.jpg',
+            'GLOBAL ELITE': 'rangs/global.jpg',
+            'PRIKOLIST :)': 'rangs/prikolist.jpg'
+        };
+
+        // Описания званий
+        const rankDescriptions = {
+            'Silver I': 'Первое серебряное звание. Вы только начинаете свой путь.',
+            'Silver Master': 'Мастер серебра. Вы освоили основы игры.',
+            'Gold Star': 'Золотая звезда. Вы стабильно показываете хорошие результаты.',
+            'Gold Pro': 'Профессионал золотого уровня. Ваши навыки впечатляют.',
+            'Master I': 'Первый уровень мастерства. Вы выделяетесь среди игроков.',
+            'Master II': 'Второй уровень мастерства. Вы приближаетесь к элите.',
+            'BIG STAR': 'Большая звезда. Вы в топе игроков.',
+            'LEGEND': 'Легенда игры. Ваше имя знают все.',
+            'SUPREME': 'Высший уровень. Вы правите этим миром.',
+            'GLOBAL ELITE': 'Глобальная элита. Вы входите в 0.1% лучших игроков.',
+            'PRIKOLIST ': 'Секретное звание'
+        };
+
+        // Пороги званий
+        const rankThresholds = {
+            'Silver I': 1000,
+            'Silver Master': 10000,
+            'Gold Star': 20000,
+            'Gold Pro': 25000,
+            'Master I': 30000,
+            'Master II': 35000,
+            'BIG STAR': 45000,
+            'LEGEND': 55000,
+            'SUPREME': 65000,
+            'GLOBAL ELITE': 80000,
+            'PRIKOLIST :)': 100000
+        };
+
+        // DOM элементы
+        const mainMenu = document.querySelector('.main-menu');
+        const ranksMenu = document.querySelector('.ranks-menu');
+        const settingsMenu = document.querySelector('.settings-menu');
+        const backgroundMenu = document.querySelector('.background-menu');
+        const mobileControlsMenu = document.querySelector('.mobile-controls-menu');
+        const scene = document.querySelector('.scene');
+        const cube = document.querySelector('.cube');
+        const message = document.querySelector('.message');
+        const pauseButton = document.querySelector('.pause-button');
+        const scoreElement = document.getElementById('score');
+        const currentRankElement = document.getElementById('current-rank');
+        const lastResultElement = document.getElementById('last-result');
+        const lastScoreElement = document.getElementById('last-score');
+        const lastRankIcon = document.getElementById('last-rank-icon');
+        const body = document.body;
+        const rankNotification = document.getElementById('rank-notification');
+        const rankNotificationIcon = document.getElementById('rank-notification-icon');
+        const rankNotificationText = document.getElementById('rank-notification-text');
+        const gameOverScreen = document.getElementById('game-over');
+        const finalScoreElement = document.getElementById('final-score');
+        const finalRankElement = document.getElementById('final-rank');
+        const finalRankIcon = document.getElementById('final-rank-icon');
+        const restartButton = document.getElementById('restart-button');
+        const settingsButtonGameOver = document.getElementById('settings-button-gameover');
+        const exitButton = document.getElementById('exit-button');
+        const playerNameInput = document.getElementById('player-name');
+        const playerNameDisplay = document.getElementById('player-name-display');
+        const hitHeartsContainer = document.getElementById('hit-hearts');
+        const comboCounter = document.getElementById('combo-counter');
+        const comboValue = document.getElementById('combo-value');
+        const rankInfo = document.getElementById('rank-info');
+        const rankInfoIcon = document.getElementById('rank-info-icon');
+        const rankInfoTitle = document.getElementById('rank-info-title');
+        const rankInfoPoints = document.getElementById('rank-info-points');
+        const rankInfoDescription = document.getElementById('rank-info-description');
+        const mobileLeft = document.getElementById('mobile-left');
+        const mobileRight = document.getElementById('mobile-right');
+        const mobileJump = document.getElementById('mobile-jump');
+        const startMobileGameBtn = document.getElementById('start-mobile-game');
+        const mobilePlayButton = document.getElementById('mobile-play-button');
+        const backgroundOptions = document.getElementById('background-options');
+        const backgroundPrev = document.querySelector('.background-prev');
+        const backgroundNext = document.querySelector('.background-next');
+
+        // Инициализация игры
+        function initGame() {
+            // Скрываем все меню
+    mainMenu.style.display = 'none';
+    ranksMenu.style.display = 'none';
+    settingsMenu.style.display = 'none';
+    backgroundMenu.style.display = 'none';
+    mobileControlsMenu.style.display = 'none';
+            // Установка имени игрока
+            gameSettings.playerName = playerNameInput.value.trim() || 'Игрок';
+            playerNameDisplay.textContent = gameSettings.playerName;
+            
+            // Установка фона
+            body.style.background = `url('${gameSettings.background}') center/cover no-repeat fixed`;
+            
+            // Сброс состояния игры
+            gameState = {
+                cubeX: window.innerWidth / 2,
+                cubeY: window.innerHeight - 20 - 75,
+                velocityX: 0,
+                velocityY: 0,
+                isJumping: false,
+                isPaused: false,
+                bullets: [],
+                score: 0,
+                currentRank: null,
+                bulletsDodged: 0,
+                hitsTaken: 0,
+                maxHits: 5,
+                combo: 0,
+                lastDodgeTime: 0,
+                comboTimeout: null,
+                ranksAchieved: {
+                    'Silver I': false,
+                    'Silver Master': false,
+                    'Gold Star': false,
+                    'Gold Pro': false,
+                    'Master I': false,
+                    'Master II': false,
+                    'BIG STAR': false,
+                    'LEGEND': false,
+                    'SUPREME': false,
+                    'GLOBAL ELITE': false,
+                    'PRIKOLIST :)': false
+                },
+                mobileLeftPressed: false,
+                mobileRightPressed: false
+            };
+            
+            // Обновление счета
+            scoreElement.textContent = '0';
+            currentRankElement.style.display = 'none';
+            currentRankElement.style.backgroundImage = '';
+            
+            // Показать последний результат, если есть
+            if (gameSettings.lastScore > 0) {
+                lastResultElement.style.display = 'flex';
+                lastScoreElement.textContent = gameSettings.lastScore;
+                if (gameSettings.lastRank && rankImages[gameSettings.lastRank]) {
+                    lastRankIcon.style.backgroundImage = `url('${rankImages[gameSettings.lastRank]}')`;
+                    lastRankIcon.style.display = 'block';
+                } else {
+                    lastRankIcon.style.display = 'none';
+                }
+            } else {
+                lastResultElement.style.display = 'none';
+            }
+            
+            // Обновление жизней
+            updateHeartsDisplay();
+            
+            // Сброс комбо
+            resetCombo();
+            
+            // Очистка пуль
+            document.querySelectorAll('.bullet').forEach(b => b.remove());
+            
+            // Скрыть экран Game Over
+            gameOverScreen.style.display = 'none';
+            
+            // Показать игровую сцену
+            scene.style.display = 'block';
+            mainMenu.style.display = 'none';
+            
+            // Управление для мобильных устройств
+            if (gameSettings.isMobile) {
+                document.querySelector('.controls').style.display = 'none';
+                mobileLeft.style.display = 'block';
+                mobileRight.style.display = 'block';
+                mobileJump.style.display = 'block';
+            } else {
+                document.querySelector('.controls').style.display = 'block';
+                mobileLeft.style.display = 'none';
+                mobileRight.style.display = 'none';
+                mobileJump.style.display = 'none';
+            }
+            
+            // Установка начальной позиции куба
+            cube.style.left = `${gameState.cubeX - 75}px`;
+            cube.style.top = `${gameState.cubeY - 75}px`;
+            
+            // Запуск анимации
+            animate();
+        }
+
+        // Обновление отображения жизней
+        function updateHeartsDisplay() {
+            hitHeartsContainer.innerHTML = '';
+            const heartsLeft = gameState.maxHits - gameState.hitsTaken;
+            
+            for (let i = 0; i < gameState.maxHits; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                if (i >= heartsLeft) {
+                    heart.classList.add('lost');
+                }
+                hitHeartsContainer.appendChild(heart);
+            }
+        }
+
+        // Комбо-система
+        function addCombo() {
+            const now = Date.now();
+            
+            // Если прошло больше 3 секунд с последнего уклонения - сброс комбо
+            if (now - gameState.lastDodgeTime > 3000) {
+                gameState.combo = 0;
+            }
+            
+            gameState.combo++;
+            gameState.lastDodgeTime = now;
+            
+            // Обновление отображения комбо
+            comboValue.textContent = gameState.combo;
+            
+            // Если комбо больше 1 - показываем счетчик
+            if (gameState.combo > 1) {
+                comboCounter.style.display = 'block';
+                comboCounter.style.animation = 'comboPulse 0.5s';
+                
+                // Через 0.5 секунд анимация заканчивается
+                setTimeout(() => {
+                    comboCounter.style.animation = '';
+                }, 500);
+            }
+            
+            // Бонус за комбо
+            const comboBonus = Math.min(Math.floor(gameState.combo / 5), 10); // Максимум +10 за комбо
+            gameState.score += comboBonus;
+            scoreElement.textContent = gameState.score;
+            
+            // Устанавливаем таймер сброса комбо
+            if (gameState.comboTimeout) {
+                clearTimeout(gameState.comboTimeout);
+            }
+            
+            gameState.comboTimeout = setTimeout(() => {
+                resetCombo();
+            }, 3000);
+        }
+
+        function resetCombo() {
+            gameState.combo = 0;
+            comboValue.textContent = '0';
+            comboCounter.style.display = 'none';
+        }
+
+        // Проверка на получение нового звания
+        function checkForNewRank() {
+            const ranks = Object.keys(rankThresholds).sort((a, b) => rankThresholds[a] - rankThresholds[b]);
+            
+            for (const rank of ranks) {
+                if (gameState.score >= rankThresholds[rank] && 
+                    !gameState.ranksAchieved[rank]) {
+                    gameState.ranksAchieved[rank] = true;
+                    gameState.currentRank = rank;
+                    showRankNotification(rank);
+                    updateCurrentRankDisplay();
+                    break;
+                }
+            }
+        }
+
+        // Получить текущее звание игрока
+        function getCurrentRank() {
+            const ranks = Object.keys(rankThresholds).sort((a, b) => rankThresholds[b] - rankThresholds[a]);
+            
+            for (const rank of ranks) {
+                if (gameState.score >= rankThresholds[rank]) {
+                    return rank;
+                }
+            }
+            return 'Новичок';
+        }
+
+        // Показать уведомление о новом звании
+        function showRankNotification(rank) {
+            rankNotificationIcon.style.backgroundImage = `url('${rankImages[rank]}')`;
+            rankNotificationText.textContent = `Новое звание: ${rank}`;
+            
+            rankNotification.style.display = 'block';
+            rankNotification.style.animation = 'none';
+            void rankNotification.offsetWidth; // Trigger reflow
+            rankNotification.style.animation = 'fadeInOut 3s ease-in-out';
+            
+            // Скрываем уведомление через 3 секунды
+            setTimeout(() => {
+                rankNotification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Обновить отображение текущего звания
+        function updateCurrentRankDisplay() {
+            if (gameState.currentRank) {
+                currentRankElement.style.display = 'block';
+                currentRankElement.style.backgroundImage = `url('${rankImages[gameState.currentRank]}')`;
+                
+                // Анимация при получении нового звания
+                currentRankElement.style.animation = 'rankIconPulse 1s 3';
+            } else {
+                currentRankElement.style.display = 'none';
+            }
+        }
+
+        // Завершение игры
+        function endGame() {
+            gameState.isPaused = true;
+            scene.style.display = 'none';
+            
+            // Сохраняем последний результат
+            gameSettings.lastScore = gameState.score;
+            gameSettings.lastRank = getCurrentRank();
+            
+            // Показать экран Game Over
+            finalScoreElement.textContent = `Очки: ${gameState.score}`;
+            const currentRank = getCurrentRank();
+            finalRankElement.textContent = `Звание: ${currentRank}`;
+            
+            // Установка иконки звания
+            if (currentRank !== 'Новичок') {
+                finalRankIcon.style.display = 'block';
+                finalRankIcon.style.backgroundImage = `url('${rankImages[currentRank]}')`;
+            } else {
+                finalRankIcon.style.display = 'none';
+            }
+            
+            gameOverScreen.style.display = 'flex';
+        }
+
+        // Показать информацию о звании
+        function showRankInfo(rank) {
+            rankInfoTitle.textContent = rank;
+            rankInfoPoints.textContent = `${rankThresholds[rank]} очков`;
+            rankInfoDescription.textContent = rankDescriptions[rank];
+            rankInfoIcon.style.backgroundImage = `url('${rankImages[rank]}')`;
+            
+            rankInfo.style.display = 'block';
+        }
+
+        // Навигация по фонам
+        let currentBgIndex = 0;
+        const bgOptions = document.querySelectorAll('.background-option');
+        
+        function updateBackgroundNavigation() {
+            bgOptions.forEach((option, index) => {
+                option.classList.remove('active');
+                if (option.dataset.bg === gameSettings.background) {
+                    option.classList.add('active');
+                    currentBgIndex = index;
+                }
+            });
+            
+            backgroundOptions.style.transform = `translateX(-${currentBgIndex * 330}px)`;
+        }
+        
+        backgroundPrev.addEventListener('click', () => {
+            if (currentBgIndex > 0) {
+                currentBgIndex--;
+                const bg = bgOptions[currentBgIndex].dataset.bg;
+                gameSettings.background = bg;
+                body.style.background = `url('${bg}') center/cover no-repeat fixed`;
+                updateBackgroundNavigation();
+            }
+        });
+        
+        backgroundNext.addEventListener('click', () => {
+            if (currentBgIndex < bgOptions.length - 1) {
+                currentBgIndex++;
+                const bg = bgOptions[currentBgIndex].dataset.bg;
+                gameSettings.background = bg;
+                body.style.background = `url('${bg}') center/cover no-repeat fixed`;
+                updateBackgroundNavigation();
+            }
+        });
+
+        // Меню управления
+        document.getElementById('play-button').addEventListener('click', function() {
+            gameSettings.isMobile = false;
+            initGame();
+        });
+        
+        mobilePlayButton.addEventListener('click', function() {
+            mainMenu.style.display = 'none';
+            mobileControlsMenu.style.display = 'flex';
+        });
+        
+        startMobileGameBtn.addEventListener('click', function() {
+    gameSettings.isMobile = true;
+    mobileControlsMenu.style.display = 'none'; // Добавляем эту строку
+    initGame();
+    });
+        
+        document.getElementById('ranks-button').addEventListener('click', function() {
+            mainMenu.style.display = 'none';
+            ranksMenu.style.display = 'flex';
+            
+            // Загружаем изображения званий
+            document.querySelectorAll('.rank-icon').forEach(icon => {
+                const rank = icon.closest('.rank-item').dataset.rank;
+                if (rankImages[rank]) {
+                    icon.style.backgroundImage = `url('${rankImages[rank]}')`;
+                }
+            });
+        });
+        
+        document.getElementById('settings-button').addEventListener('click', () => {
+            mainMenu.style.display = 'none';
+            settingsMenu.style.display = 'flex';
+            
+            // Установка текущих значений в настройки
+            document.getElementById('cube-speed').value = gameSettings.moveSpeed;
+            document.getElementById('bullet-speed').value = gameSettings.bulletSpeed;
+            document.getElementById('jump-force').value = gameSettings.jumpForce;
+        });
+        
+        document.getElementById('background-button').addEventListener('click', () => {
+            mainMenu.style.display = 'none';
+            backgroundMenu.style.display = 'flex';
+            updateBackgroundNavigation();
+        });
+        
+        // Кнопка перезапуска игры
+        restartButton.addEventListener('click', () => {
+            gameOverScreen.style.display = 'none';
+            initGame();
+        });
+        
+        // Кнопка настроек в Game Over
+        settingsButtonGameOver.addEventListener('click', () => {
+            gameOverScreen.style.display = 'none';
+            mainMenu.style.display = 'none';
+            settingsMenu.style.display = 'flex';
+            
+            // Установка текущих значений в настройки
+            document.getElementById('cube-speed').value = gameSettings.moveSpeed;
+            document.getElementById('bullet-speed').value = gameSettings.bulletSpeed;
+            document.getElementById('jump-force').value = gameSettings.jumpForce;
+        });
+        
+        // Кнопка выхода в главное меню
+        exitButton.addEventListener('click', () => {
+            gameOverScreen.style.display = 'none';
+            mainMenu.style.display = 'flex';
+            gameSettings.isMobile = false;
+        });
+        
+        // Кнопки назад
+        document.querySelectorAll('.back-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                ranksMenu.style.display = 'none';
+                settingsMenu.style.display = 'none';
+                backgroundMenu.style.display = 'none';
+                mobileControlsMenu.style.display = 'none';
+                mainMenu.style.display = 'flex';
+            });
+        });
+        
+        // Сохранение настроек
+        settingsMenu.querySelectorAll('input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                if (e.target.id === 'cube-speed') {
+                    gameSettings.moveSpeed = parseInt(e.target.value);
+                } else if (e.target.id === 'bullet-speed') {
+                    gameSettings.bulletSpeed = parseInt(e.target.value);
+                } else if (e.target.id === 'jump-force') {
+                    gameSettings.jumpForce = parseInt(e.target.value);
+                }
+            });
+        });
+        
+        // Выбор фона
+        document.querySelectorAll('.background-option').forEach(option => {
+            option.addEventListener('click', () => {
+                gameSettings.background = option.dataset.bg;
+                body.style.background = `url('${gameSettings.background}') center/cover no-repeat fixed`;
+                updateBackgroundNavigation();
+            });
+        });
+        
+        // Клик по званию в меню
+        document.querySelectorAll('.rank-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const rank = item.dataset.rank;
+                showRankInfo(rank);
+            });
+        });
+        
+        // Закрытие информации о звании
+        document.querySelector('.close-rank-info').addEventListener('click', () => {
+            rankInfo.style.display = 'none';
+        });
+
+        // Пауза
+        pauseButton.addEventListener('click', () => {
+            gameState.isPaused = !gameState.isPaused;
+            pauseButton.textContent = gameState.isPaused ? 'Продолжить' : 'Пауза';
+            
+            if (!gameState.isPaused) {
+                animate();
+            }
+        });
+
+        // Мобильное управление
+        mobileLeft.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            gameState.mobileLeftPressed = true;
+            this.classList.add('active');
+        });
+
+        mobileLeft.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            gameState.mobileLeftPressed = false;
+            this.classList.remove('active');
+        });
+
+        mobileRight.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            gameState.mobileRightPressed = true;
+            this.classList.add('active');
+        });
+
+        mobileRight.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            gameState.mobileRightPressed = false;
+            this.classList.remove('active');
+        });
+
+        mobileJump.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            if (!gameState.isJumping && !gameState.isPaused) {
+                gameState.velocityY = -gameSettings.jumpForce;
+                gameState.isJumping = true;
+            }
+        });
+
+        // Игровая логика
+        const cubeSize = 150;
+        const bulletSize = 120;
+        const gravity = 0.5;
+        let groundLevel = window.innerHeight - 20 - cubeSize/2;
+        
+        // Модели падающих объектов (замените на свои изображения из папки images)
+        const bulletImages = [
+            'images/bullet1.jpg',
+            'images/bullet2.jpg',
+            'images/bullet3.jpg',
+            'images/bullet4.jpg',
+            'images/bullet5.jpg',
+            'images/bullet6.jpg',
+            'images/bullet7.jpg',
+            'images/bullet8.jpg',
+            'images/bullet9.jpg',
+            'images/bullet10.jpg'
+        ];
+        
+        // Обработка клавиатуры
+        const keys = {};
+        document.addEventListener('keydown', (e) => {
+            keys[e.code] = true;
+            if (e.code === 'Space' && !gameState.isJumping && !gameState.isPaused) {
+                gameState.velocityY = -gameSettings.jumpForce;
+                gameState.isJumping = true;
+            }
+        });
+        document.addEventListener('keyup', (e) => {
+            keys[e.code] = false;
+        });
+        
+        // Создаем пулю
+        function createBullet() {
+            if (gameState.isPaused) return;
+            
+            const bullet = document.createElement('div');
+            bullet.classList.add('bullet');
+            
+            // Случайное изображение
+            const randomImage = bulletImages[Math.floor(Math.random() * bulletImages.length)];
+            bullet.style.backgroundImage = `url('${randomImage}')`;
+            
+            // Случайная позиция по X
+            const x = Math.random() * (window.innerWidth - bulletSize);
+            bullet.style.left = `${x}px`;
+            bullet.style.top = `-${bulletSize}px`;
+            
+            scene.appendChild(bullet);
+            
+            // Добавляем пулю в массив
+            gameState.bullets.push({
+                element: bullet,
+                x: x,
+                y: -bulletSize,
+                width: bulletSize,
+                height: bulletSize,
+                speed: gameSettings.bulletSpeed + Math.random() * 2
+            });
+        }
+        
+        // Проверка столкновений
+        function checkCollisions() {
+            const cubeRect = {
+                x: gameState.cubeX - cubeSize/2,
+                y: gameState.cubeY - cubeSize/2,
+                width: cubeSize,
+                height: cubeSize
+            };
+            
+            for (let i = 0; i < gameState.bullets.length; i++) {
+                const bullet = gameState.bullets[i];
+                
+                if (isColliding(cubeRect, bullet)) {
+                    showMessage();
+                    bullet.element.remove();
+                    gameState.bullets.splice(i, 1);
+                    i--;
+                    
+                    // Уменьшение очков при попадании
+                    gameState.score = Math.max(0, gameState.score - 10);
+                    scoreElement.textContent = gameState.score;
+                    
+                    // Увеличение счетчика попаданий
+                    gameState.hitsTaken++;
+                    updateHeartsDisplay();
+                    
+                    // Сброс комбо при попадании
+                    resetCombo();
+                    
+                    // Проверка на завершение игры
+                    if (gameState.hitsTaken >= gameState.maxHits) {
+                        endGame();
+                        return;
+                    }
+                    
+                    checkForNewRank();
+                }
+            }
+        }
+        
+        // Проверка пересечения прямоугольников
+        function isColliding(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+        
+        // Показать сообщение
+        function showMessage() {
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 2000);
+        }
+        
+        // Обновление физики
+        function updatePhysics() {
+            if (gameState.isPaused) return;
+            
+            // Гравитация
+            gameState.velocityY += gravity;
+            
+            // Управление
+            if (gameSettings.isMobile) {
+                if (gameState.mobileLeftPressed) gameState.velocityX = -gameSettings.moveSpeed;
+                else if (gameState.mobileRightPressed) gameState.velocityX = gameSettings.moveSpeed;
+                else gameState.velocityX *= 0.8;
+            } else {
+                if (keys['ArrowLeft']) gameState.velocityX = -gameSettings.moveSpeed;
+                else if (keys['ArrowRight']) gameState.velocityX = gameSettings.moveSpeed;
+                else gameState.velocityX *= 0.8;
+            }
+            
+            // Обновление позиции
+            gameState.cubeX += gameState.velocityX;
+            gameState.cubeY += gameState.velocityY;
+            
+            // Проверка земли
+            if (gameState.cubeY > groundLevel) {
+                gameState.cubeY = groundLevel;
+                gameState.velocityY = 0;
+                gameState.isJumping = false;
+            }
+            
+            // Границы экрана
+            if (gameState.cubeX < cubeSize/2) gameState.cubeX = cubeSize/2;
+            if (gameState.cubeX > window.innerWidth - cubeSize/2) gameState.cubeX = window.innerWidth - cubeSize/2;
+        }
+        
+        // Обновление пуль
+        function updateBullets() {
+            if (gameState.isPaused) return;
+            
+            for (let i = 0; i < gameState.bullets.length; i++) {
+                const bullet = gameState.bullets[i];
+                bullet.y += bullet.speed;
+                bullet.element.style.top = `${bullet.y}px`;
+                
+                // Удаление пуль за пределами экрана
+                if (bullet.y > window.innerHeight) {
+                    bullet.element.remove();
+                    gameState.bullets.splice(i, 1);
+                    i--;
+                    
+                    // Увеличение очков
+                    gameState.score += 5;
+                    scoreElement.textContent = gameState.score;
+                    
+                    // Добавление комбо
+                    addCombo();
+                    
+                    // Проверка на получение нового звания
+                    checkForNewRank();
+                }
+            }
+        }
+        
+        // Анимация
+        function animate() {
+            if (gameState.isPaused) return;
+            
+            updatePhysics();
+            updateBullets();
+            checkCollisions();
+            
+            // Применяем новую позицию куба
+            cube.style.left = `${gameState.cubeX - cubeSize/2}px`;
+            cube.style.top = `${gameState.cubeY - cubeSize/2}px`;
+            
+            // Вращение куба
+            cube.style.transform = `rotateX(${gameState.velocityY * 2}deg) rotateY(${gameState.velocityX * 2}deg)`;
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Запуск генерации пуль
+        setInterval(createBullet, 1000);
+        
+        // Начальная инициализация
+        body.style.background = `url('${gameSettings.background}') center/cover no-repeat fixed`;
+        
+        // Обработчик изменения размера окна
+        window.addEventListener('resize', () => {
+            if (scene.style.display === 'block') {
+                // Обновляем позицию куба при изменении размера окна
+                gameState.cubeY = window.innerHeight - 20 - cubeSize/2;
+                groundLevel = window.innerHeight - 20 - cubeSize/2;
+                
+                if (cube) {
+                    cube.style.left = `${gameState.cubeX - cubeSize/2}px`;
+                    cube.style.top = `${gameState.cubeY - cubeSize/2}px`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
